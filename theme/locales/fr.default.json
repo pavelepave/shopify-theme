@@ -1,0 +1,9 @@
+{
+  "index": {
+    "featured_products": "Produits mis en avant"
+  },
+  "global": {
+    "empty_cart": "Panier vide.",
+    "cart": "Panier"
+  }
+}

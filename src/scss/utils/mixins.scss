@@ -1,0 +1,210 @@
+/*============================================================================
+ * Variables
+ *============================================================================*/
+
+$class-type: unquote(".");
+$min: min-width;
+$max: max-width;
+
+// Grid
+$gutter: 15px;
+$large: 1025px;
+$medium: 769px;
+$small: 480px;
+$siteWidth: 1220px;
+$viewportIncrement: 1px;
+
+$postSmall: $small + $viewportIncrement;
+$preMedium: $medium - $viewportIncrement;
+$preLarge: $large - $viewportIncrement;
+
+$min: min-width;
+$max: max-width;
+
+$breakpoints: (
+  '-xs' '(#{$max}: #{$small})',
+  '-sm' '(#{$min}: #{$postSmall}) and (#{$max}: #{$preMedium})',
+  '-md' '(#{$min}: #{$medium}) and (#{$max}: #{$preLarge})',
+  '-lg' '(min-width: #{$large})',
+);
+
+$breakpoint-has-widths: ('-xs', '-sm', '-md', '-lg');
+$breakpoint-has-push:  ('-xs', '-sm', '-md', '-lg');
+$breakpoint-has-pull:  ('-xs', '-sm', '-md', '-lg');
+$breakpoint-has-hidden:  ('-xs', '-sm', '-md', '-lg');
+
+$class-type: unquote(".");
+
+/*============================================================================
+ * Dependency-free breakpoint mixin
+ *============================================================================*/
+@mixin at-query ($constraint_, $viewport1_, $viewport2_:null) {
+  $constraint: $constraint_;
+  $viewport1: $viewport1_;
+  $viewport2: $viewport2_;
+
+  @if type-of($constraint_)==number {
+    $viewport1: $constraint_;
+    $viewport2: $viewport1_;
+    $constraint: null;
+  }
+
+  @if $constraint==$min {
+    @media screen and ($min: $viewport1) { @content; }
+  }
+
+  @else if $constraint==$max {
+    @media screen and ($max: $viewport1) { @content; }
+  }
+
+  @else {
+    @media screen and ($min: $viewport1) and ($max: $viewport2) { @content; }
+  }
+}
+
+@mixin large() {
+  @include at-query($min, $large) { @content; }
+}
+
+@mixin medium() {
+  @include at-query($min, $medium) { @content; }
+}
+
+@mixin small() {
+  @include at-query($min, $postSmall) { @content; }
+}
+
+/*============================================================================
+ * Clearfix helper on uniform grids
+ *============================================================================*/
+@mixin clearfix-helper($namespace:"") {
+  .grid-uniform {
+
+    #{$class-type}col#{$namespace}-6:nth-child(2n+1),
+    #{$class-type}col#{$namespace}-4:nth-child(3n+1),
+    #{$class-type}col#{$namespace}-3:nth-child(4n+1),
+    #{$class-type}col#{$namespace}-fifth:nth-child(5n+1),
+    #{$class-type}col#{$namespace}-2:nth-child(6n+1),
+    #{$class-type}col#{$namespace}-1:nth-child(12n+1) {
+      clear: both;
+    }
+  }
+}
+
+/*============================================================================
+ * Clearfix 
+ *============================================================================*/
+@mixin clearfix() {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  *zoom: 1;
+}
+
+/*============================================================================
+ * Device helper 
+ *============================================================================*/
+@mixin device-helper($namespace:"") {
+  #{$class-type}col#{$namespace}-show {display: block;}
+  #{$class-type}col#{$namespace}-hide {display: none;}
+  #{$class-type}col#{$namespace}-text-left {text-align: left;}
+  #{$class-type}col#{$namespace}-text-right {text-align: right;}
+  #{$class-type}col#{$namespace}-text-center { text-align: center; }
+  #{$class-type}col#{$namespace}-left {float: left;}
+  #{$class-type}col#{$namespace}-right {float: right;}
+}
+
+/*============================================================================
+ * Device Type 
+ *============================================================================*/
+ @mixin device-type($namespace:"") {
+  #{$class-type}col#{$namespace}-1	  { width: 8.333%; }
+  #{$class-type}col#{$namespace}-2   { width: 16.666%; }
+  #{$class-type}col#{$namespace}-3   { width: 25%; }
+  #{$class-type}col#{$namespace}-fifth { width: 20%; }
+  #{$class-type}col#{$namespace}-4   { width: 33.333%; }
+  #{$class-type}col#{$namespace}-5   { width: 41.666% }
+  #{$class-type}col#{$namespace}-6   { width: 50%; }
+  #{$class-type}col#{$namespace}-7   { width: 58.333%; }
+  #{$class-type}col#{$namespace}-8   { width: 66.666%; }
+  #{$class-type}col#{$namespace}-9   { width: 75%; }
+  #{$class-type}col#{$namespace}-10   { width: 83.333%; }
+  #{$class-type}col#{$namespace}-11   { width: 91.666%; }
+  #{$class-type}col#{$namespace}-12   { width: 100%; }
+}
+/*============================================================================
+ * Build grid 
+ *============================================================================*/
+@mixin grid-media-query($media-query) {
+  $breakpoint-found: false;
+
+  @each $breakpoint in $breakpoints {
+    $name: nth($breakpoint, 1);
+    $declaration: nth($breakpoint, 2);
+
+    @if $media-query == $name and $declaration {
+      $breakpoint-found: true;
+
+      @media only screen and #{$declaration} {
+        @content;
+      }
+    }
+  }
+
+  @if $breakpoint-found == false {
+    @warn "Breakpoint '#{$media-query}' does not exist";
+  }
+}
+$class-type: unquote(".");
+
+/*============================================================================
+ * Pull / push
+ *============================================================================*/
+@mixin pull-setup($namespace: "") {
+  #{$class-type}pull#{$namespace}-1     { right: 8.333%; position: relative; }
+  #{$class-type}pull#{$namespace}-2    { right: 16.666%; position: relative; }
+  #{$class-type}pull#{$namespace}-3  { right: 25%; position: relative; }
+  #{$class-type}pull#{$namespace}-4   { right: 33.333%; position: relative; }
+  #{$class-type}pull#{$namespace}-5   { right: 41.666%; position: relative; }
+  #{$class-type}pull#{$namespace}-6    { right: 50%; position: relative; }
+  #{$class-type}pull#{$namespace}-7  { right: 58.333%; position: relative; }
+  #{$class-type}pull#{$namespace}-8  { right: 66.666%; position: relative; }
+  #{$class-type}pull#{$namespace}-9   { right: 75%; position: relative; }
+  #{$class-type}pull#{$namespace}-10    { right: 83.333%; position: relative; }
+  #{$class-type}pull#{$namespace}-11 { right: 91.666%; position: relative; }
+  #{$class-type}pull#{$namespace}-12 { right: 100%; position: relative; }
+}
+
+@mixin push-setup($namespace: "") {
+  #{$class-type}push#{$namespace}-1     { left: 8.333%; position: relative; }
+  #{$class-type}push#{$namespace}-2    { left: 16.666%; position: relative; }
+  #{$class-type}push#{$namespace}-3  { left: 25%; position: relative; }
+  #{$class-type}push#{$namespace}-4   { left: 33.333%; position: relative; }
+  #{$class-type}push#{$namespace}-5   { left: 41.666%; position: relative; }
+  #{$class-type}push#{$namespace}-6    { left: 50%; position: relative; }
+  #{$class-type}push#{$namespace}-7  { left: 58.333%; position: relative; }
+  #{$class-type}push#{$namespace}-8  { left: 66.666%; position: relative; }
+  #{$class-type}push#{$namespace}-9   { left: 75%; position: relative; }
+  #{$class-type}push#{$namespace}-10    { left: 83.333%; position: relative; }
+  #{$class-type}push#{$namespace}-11 { left: 91.666%; position: relative; }
+  #{$class-type}push#{$namespace}-12 { left: 100%; position: relative; }
+}
+
+/*============================================================================
+ * Create grid
+ *============================================================================*/
+@mixin create-grid ($children: div,$width: 100%) {
+
+	@include clearfix();
+	
+	width: calc(#{$width} + #{$gutter});
+	margin-left: -$gutter;
+
+	#{$children} {
+		padding-left: $gutter;
+		display: block;
+	}
+}

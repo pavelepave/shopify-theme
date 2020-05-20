@@ -1,0 +1,164 @@
+@import 'utils/mixins';
+
+/*============================================================================
+ * Normalize
+ *============================================================================*/
+
+* {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+}
+body {
+	margin: 0;
+}
+a {
+	text-decoration: none;
+}
+ul, ol {
+	list-style: none;
+}
+p, ul, ol {
+	margin: 0;
+	padding: 0;
+}
+h1, h2, h3, h4, h5, h6 {
+	margin: 0;
+}
+img {
+	max-width: 100%;
+}
+input, 
+textarea,
+button,
+select {
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	border: none;
+	background-color: transparent;
+	&:focus,
+	&:active {
+		outline: none;
+	}
+}
+textarea {
+	resize: none;
+}
+figure,
+fieldset {
+	padding: 0;
+	margin: 0;
+	border: none;
+}
+
+/*============================================================================
+ * Grid
+ *============================================================================*/
+.grid,.grid-uniform {
+	@include create-grid('.grid__item');
+}
+
+.grid__item {
+  width: 100%;
+  float: left;
+}
+
+/*================ Our regular, non-responsive width and helper classes ================*/
+@include device-type();
+@include device-helper();
+
+/*================ Our responsive classes, if we have enabled them ================*/
+@each $name in $breakpoint-has-widths {
+  @include grid-media-query($name) {
+    @include device-type('#{$name}');
+    @include device-helper('#{$name}');
+    @include clearfix-helper('#{$name}');
+  }
+}
+
+
+/*============================================================================
+ * Pull / push / hide
+ *============================================================================*/
+@include push-setup();
+
+@each $name in $breakpoint-has-push {
+  @include grid-media-query($name) {
+    @include push-setup('#{$name}');
+  }
+}
+
+@include pull-setup();
+
+@each $name in $breakpoint-has-push {
+  @include grid-media-query($name) {
+    @include pull-setup('#{$name}');
+  }
+}
+
+/*============================================================================
+ * flex
+ *============================================================================*/
+.grid-flex__item {
+	padding-left: $gutter;
+	width: 100%;
+}
+
+.grid-flex {
+	display: flex;
+	flex-flow: row wrap;
+
+	width: calc(100% + #{$gutter});
+	margin-left: -$gutter;
+
+	&--center {
+		@extend .grid-flex;
+
+		align-items: center;	
+		>.grid-flex__item { align-self: center; }
+	}
+}
+/**
+ * Flow control
+ */
+.grid-flex--reverse {
+	flex-flow: row-reverse wrap;
+}
+
+.grid-flex--reverse-md {
+	@include medium() { flex-flow: row-reverse wrap; }
+}
+
+.grid-flex--row {
+	flex-flow: row nowrap;
+}
+
+.grid-flex--row-md {
+	@include medium() {
+		flex-flow: row nowrap;
+	}
+}
+
+/*============================================================================
+ * wrapper
+ *============================================================================*/
+.__wrapper {
+  @include clearfix();
+
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: content-box;
+
+  max-width: 100%;
+
+  // Nested wrapper are useless
+  // In case of nested wrapper forget padding
+  .wrapper { padding: 0; } 
+}
+
+.wrapper {
+  @extend .__wrapper;
+
+  @include medium() { max-width: $siteWidth; }
+}
